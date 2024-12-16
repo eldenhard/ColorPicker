@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h2>hello world</h2>
+    <ColorPicker />
   </div>
 </template>
 
 <script setup>
-  console.log('👋 This message is being logged by "App.vue", included via Vite');
+import ColorPicker from './components/ColorPicker.vue'
 </script>
