@@ -2,11 +2,12 @@
 
 <script setup>
 import RGBAOutput from './RGBAOutput.vue';
+import ColorDisplay from './ColorDisplay.vue';
 </script>
 
 <template>
   <div class="ColorPicker__content">
-    <RGBAOutput />
+    <ColorDisplay />
     <RGBAOutput />
     <RGBAOutput />
   </div>

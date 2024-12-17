@@ -1,11 +1,15 @@
-import { app, BrowserWindow,  } from 'electron';
-import path from 'node:path';
-import started from 'electron-squirrel-startup';
+import { app, BrowserWindow, ipcMain, desktopCapturer, session, screen } from "electron";
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+import path from "node:path";
+import started from "electron-squirrel-startup";
+
+// Обработка создания/удаления ярлыков на Windows при установке/удалении
 if (started) {
   app.quit();
 }
+
+let mainWindow;
+let lastPosition = { x: 0, y: 0 };
 
 const createWindow = () => {
   // Create the browser window.
@@ -13,8 +17,11 @@ const createWindow = () => {
     width: 800,
     height: 600,
     resizable: false,
+    // подключение предварительной загрузки к проекту
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false,
     },
   });
 
@@ -29,29 +36,25 @@ const createWindow = () => {
   mainWindow.webContents.openDevTools();
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  createWindow();
-
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+  // Обработчик для получения координат курсора и их отправки в рендерер
+  ipcMain.handle("get-cursor-position", () => {
+    return screen.getCursorScreenPoint(); // Получаем координаты мыши
   });
+  
+  session.defaultSession.setDisplayMediaRequestHandler(
+    (request, callback) => {
+      desktopCapturer.getSources({ types: ["screen"] }).then((sources) => {
+        callback({ video: sources[0], audio: "loopback" });
+      });
+    },
+    { useSystemPicker: true }
+  );
+  createWindow();
 });
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+// Выйти из всего приложения если все окна закрыты
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

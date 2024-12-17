@@ -1,18 +1,14 @@
 <script setup>
   import { ref } from "vue";
-
+  import DropdownMenu from "../ui/DropdownMenu/DropdownMenu.vue";
   // Реактивные данные для отображения цвета и значений
   const hexValue = ref("#FFFFFF");
   const rgbaValue = ref("rgba(255, 255, 255, 1)");
 
   // Логика для начала и завершения выбора цвета
-  const startColorPicker = () => {
+  const startColorPicker = () => {};
 
-  };
-
-  const stopColorPicker = () => {
-
-  };
+  const stopColorPicker = () => {};
 </script>
 
 <template>
@@ -30,6 +26,7 @@
 
     <div class="RGBAOutput_block__body">
       <!-- Цвет -->
+      <!-- <DropdownMenu /> -->
       <div class="RGBAOutput_block__body__hex">
         <div class="hex_color" :style="{ backgroundColor: hexValue }"></div>
         <div class="hex_value">{{ hexValue }}</div>
@@ -46,6 +43,4 @@
   @use "../styles/ColorPicker.scss";
 </style>
 
-<style lang="scss">
-  @use "../styles/ColorPicker.scss";
-</style>
+
