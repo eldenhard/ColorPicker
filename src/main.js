@@ -1,5 +1,4 @@
-import { app, BrowserWindow, ipcMain, desktopCapturer, session, screen } from "electron";
-
+import { app, BrowserWindow, ipcMain, desktopCapturer, session, screen, globalShortcut } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
 
@@ -7,9 +6,7 @@ import started from "electron-squirrel-startup";
 if (started) {
   app.quit();
 }
-
-let mainWindow;
-let lastPosition = { x: 0, y: 0 };
+let mainWindow
 
 const createWindow = () => {
   // Create the browser window.
@@ -31,7 +28,9 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-
+  globalShortcut.register("W", () => {  
+    mainWindow.webContents.send('global-shortcut', 'Electron loves global shortcuts!');  
+  });  
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
@@ -39,9 +38,9 @@ const createWindow = () => {
 app.whenReady().then(() => {
   // Обработчик для получения координат курсора и их отправки в рендерер
   ipcMain.handle("get-cursor-position", () => {
-    return screen.getCursorScreenPoint(); // Получаем координаты мыши
+    return screen.getCursorScreenPoint();
   });
-  
+
   session.defaultSession.setDisplayMediaRequestHandler(
     (request, callback) => {
       desktopCapturer.getSources({ types: ["screen"] }).then((sources) => {
@@ -52,6 +51,7 @@ app.whenReady().then(() => {
   );
   createWindow();
 });
+
 // Выйти из всего приложения если все окна закрыты
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

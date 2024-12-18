@@ -11,10 +11,11 @@ contextBridge.exposeInMainWorld("versions", {
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
-  captureScreen: async () => {
-    const sources = await desktopCapturer.getSources({ types: ["screen"] });
-    const screen = sources[0]; // Берем первый экран (можно добавить логику выбора)
-    return screen.thumbnail.toDataURL(); // Возвращаем изображение экрана
-  },
-  getCursorPosition: () => ipcRenderer.invoke("get-cursor-position"), 
+  // captureScreen: async () => {
+  //   const sources = await desktopCapturer.getSources({ types: ["screen"] });
+  //   const screen = sources[0]; // Берем первый экран (можно добавить логику выбора)
+  //   return screen.thumbnail.toDataURL(); // Возвращаем изображение экрана
+  // },
+  onGlobalShortcut: (callback) => ipcRenderer.on("global-shortcut", (event, message) => callback(message)),
+  getCursorPosition: () => ipcRenderer.invoke("get-cursor-position"),
 });
