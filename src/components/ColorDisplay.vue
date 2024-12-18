@@ -164,7 +164,7 @@
         <div class="circle orange"></div>
         <div class="circle green"></div>
       </div>
-      <PopOver />
+      <!-- <PopOver /> -->
     </div>
 
     <div class="RGBAOutput_block__body_fdcolumn">

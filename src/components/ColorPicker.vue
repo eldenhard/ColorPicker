@@ -4,7 +4,7 @@
 import { ref } from 'vue';
 import RGBAOutput from './RGBAOutput.vue';
 import ColorDisplay from './ColorDisplay.vue';
-
+import ColorWheel from './ColorWheel.vue';
 let RGBAColor = ref("")
 
 const colorCurrentPixel = (val = "rgba(255, 255, 255, 1") => {
@@ -16,7 +16,7 @@ const colorCurrentPixel = (val = "rgba(255, 255, 255, 1") => {
   <div class="ColorPicker__content">
     <ColorDisplay @colorCurrentPixel="colorCurrentPixel"/>
     <RGBAOutput :RGBAColor="RGBAColor" />
-    <RGBAOutput />
+    <ColorWheel />
   </div>
 </template>
 
