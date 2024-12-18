@@ -5,17 +5,15 @@
   import PopOver from "../ui/PopOver/PopOver.vue";
 
   const canvas = ref(null);
-  const videoElement = ref(null);
   const mousePosition = ref({ x: 0, y: 0 });
 
   const ZOOM_REGION_SIZE = 50;
-  const ZOOM_SCALE = ref(5);
+  const ZOOM_SCALE = ref(8);
 
   let ctx = null;
   let animationFrameId = null;
   let intervalId;
-  let stream = null; // Добавляем stream для управления потоком
-
+  const emit = defineEmits(['colorCurrentPixel'])
   // Функция для обновления координат мыши
   const updateMousePosition = async () => {
     try {
@@ -93,21 +91,6 @@
 
           // Рисуем сетку
           drawGrid(scaledWidth, scaledHeight);
-
-          // Рисуем курсор в центре увеличенной области
-          // ctx.beginPath();
-          // ctx.arc(
-          //   scaledWidth / 2, // Центр X увеличенной области
-          //   scaledHeight / 2, // Центр Y увеличенной области
-          //   5, // Радиус курсора
-          //   0,
-          //   Math.PI * 2
-          // );
-          // ctx.fillStyle = "red";
-          // ctx.fill();
-          // ctx.strokeStyle = "white";
-          // ctx.lineWidth = 2;
-          // ctx.stroke();
         }
 
         // Рекурсивный вызов для обновления
@@ -141,11 +124,22 @@
 
     alert("Поток остановлен по правому клику");
   };
+  const getPixelColor = (event) => {
+    const rect = canvas.value.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
 
+    // Получаем данные о пикселе
+    const imageData = ctx.getImageData(x, y, 1, 1);
+    const pixel = imageData.data;
+
+    let color = `rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3] / 255})`;
+    emit('colorCurrentPixel', color);
+  };
   // Инициализация canvas и потока
   onMounted(() => {
     ctx = canvas.value.getContext("2d");
-
+    captureScreen();
     intervalId = setInterval(updateMousePosition, 1);
     // Добавляем обработчик правого клика
     window.electronAPI.onGlobalShortcut((message) => {
@@ -159,6 +153,7 @@
     if (canvas.value) {
       canvas.value.removeEventListener("contextmenu", stopCaptureOnRightClick);
     }
+    clearInterval(intervalId);
   });
 </script>
 <template>
@@ -169,13 +164,12 @@
         <div class="circle orange"></div>
         <div class="circle green"></div>
       </div>
+      <PopOver />
     </div>
 
     <div class="RGBAOutput_block__body_fdcolumn">
       <button @click="captureScreen">Start Capture</button>
-      <button @click="stopCapture">Stop Capture</button>
-      <p>Позиция мыши: x: {{ mousePosition.x }}, y: {{ mousePosition.y }}</p>
-      <canvas ref="canvas" width="200" height="150"></canvas>
+      <canvas ref="canvas" width="200" height="150" @click="getPixelColor"></canvas>
     </div>
   </div>
 </template>
@@ -188,10 +182,7 @@
     align-items: center;
     box-sizing: border-box;
   }
-  //  video {
-  //  width: 100%;
-  // height: 100%;
-  //}
+
   canvas {
     margin: 10px;
     border: 1px solid black;

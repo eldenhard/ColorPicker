@@ -1,14 +1,21 @@
 <script setup>
   import { ref } from "vue";
   import DropdownMenu from "../ui/DropdownMenu/DropdownMenu.vue";
-  // Реактивные данные для отображения цвета и значений
-  const hexValue = ref("#FFFFFF");
-  const rgbaValue = ref("rgba(255, 255, 255, 1)");
+  import Toast from "../ui/Toast/Toast.vue";
+  import { rgbaToHex } from "../composables/RgbaToHex";
 
-  // Логика для начала и завершения выбора цвета
-  const startColorPicker = () => {};
-
-  const stopColorPicker = () => {};
+  const props = defineProps({
+    RGBAColor: {
+      type: String,
+      default: "rgba(255, 255, 255, 1)",
+    },
+  });
+  const saveColor = (val) => {
+    if (val == "") {
+      val = "rgba(255, 255, 255, 1)";
+    }
+    navigator.clipboard.writeText(val);
+  };
 </script>
 
 <template>
@@ -28,12 +35,21 @@
       <!-- Цвет -->
       <!-- <DropdownMenu /> -->
       <div class="RGBAOutput_block__body__hex">
-        <div class="hex_color" :style="{ backgroundColor: hexValue }"></div>
-        <div class="hex_value">{{ hexValue }}</div>
+        <div class="hex_color" :style="{ backgroundColor: RGBAColor }"></div>
+        <div class="hex_value">
+          <p>HEX: {{ RGBAColor ? rgbaToHex(RGBAColor) : "#FFFFFF" }}</p>
+          <Toast :stylesTeam="false">
+            <img src="../assets/copy.svg" class="copy_icon" alt="копировать элемент" @click="saveColor(rgbaToHex(RGBAColor))" />
+          </Toast>
+        </div>
       </div>
       <div class="RGBAOutput_block__body__rgba">
-        <div class="rgba_color" :style="{ backgroundColor: rgbaValue }"></div>
-        <div class="rgba_value">{{ rgbaValue }}</div>
+        <div class="rgba_value">
+          <p>RGB: {{ RGBAColor || "rgba(255, 255, 255, 1)" }}</p>
+          <Toast :stylesTeam="false">
+            <img src="../assets/copy.svg" class="copy_icon" alt="копировать элемент" @click="saveColor(RGBAColor)" />
+          </Toast>
+        </div>
       </div>
     </div>
   </div>
@@ -42,5 +58,3 @@
 <style lang="scss">
   @use "../styles/ColorPicker.scss";
 </style>
-
-
