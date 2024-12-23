@@ -7,7 +7,7 @@
   const props = defineProps({
     RGBAColor: {
       type: String,
-      default: "rgba(255, 255, 255, 1)",
+      default: () => "rgba(255, 255, 255, 1)",
     },
   });
   const saveColor = (val) => {
@@ -37,7 +37,7 @@
       <div class="RGBAOutput_block__body__hex">
         <div class="hex_color" :style="{ backgroundColor: RGBAColor }"></div>
         <div class="hex_value">
-          <p style="white-space: nowrap; font-size: 12px;">HEX: {{ RGBAColor ? rgbaToHex(RGBAColor) : "#FFFFFF" }}</p>
+          <p style="white-space: nowrap; font-size: 12px;">HEX: {{  rgbaToHex(RGBAColor)  }}</p>
           <Toast :stylesTeam="false">
             <img src="../assets/copy.svg" class="copy_icon" alt="копировать элемент" @click="saveColor(rgbaToHex(RGBAColor))" />
           </Toast>
@@ -45,7 +45,7 @@
       </div>
       <div class="RGBAOutput_block__body__rgba">
         <div class="rgba_value">
-          <p style="white-space: nowrap; font-size: 12px;">RGB: {{ RGBAColor || "rgba(255, 255, 255, 1)" }}</p>
+          <p style="white-space: nowrap; font-size: 12px;">RGB: {{ RGBAColor }}</p>
           
           <Toast :stylesTeam="false">
             <img src="../assets/copy.svg" class="copy_icon" alt="копировать элемент" @click="saveColor(RGBAColor)" />

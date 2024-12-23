@@ -1,18 +1,17 @@
 // Компонент для отображения цвета
 
-<script setup>
+<script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from "vue";
-  import PopOver from "../ui/PopOver/PopOver.vue";
 
   const canvas = ref(null);
   const mousePosition = ref({ x: 0, y: 0 });
 
   const ZOOM_REGION_SIZE = 50;
-  const ZOOM_SCALE = ref(8);
+  const ZOOM_SCALE = ref(30);
 
-  let ctx = null;
-  let animationFrameId = null;
-  let intervalId;
+  let ctx : null | string = null;
+  let animationFrameId : null | string = null;
+  let intervalId : number | undefined;
   const emit = defineEmits(['colorCurrentPixel'])
   // Функция для обновления координат мыши
   const updateMousePosition = async () => {
@@ -24,10 +23,10 @@
     }
   };
   // Функция рисования сетки
-  const drawGrid = (scaledWidth, scaledHeight) => {
-    const cellSize = ZOOM_SCALE.value; // Размер одной ячейки в увеличении
+  const drawGrid = (scaledWidth : number, scaledHeight: number) => {
+    const cellSize = ZOOM_SCALE.value / 2; // Размер одной ячейки в увеличении
     ctx.strokeStyle = "#999";
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth = 0.4;
 
     // Рисуем вертикальные линии
     for (let x = 0; x <= scaledWidth; x += cellSize) {

@@ -21,7 +21,7 @@ const app = createApp(App);
 app.use(PrimeVue).mount("#app");
 
 const information = document.getElementById("overlay");
-information.innerText = `This app is using: Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), Electron (v${versions.electron()})}`;
+information.innerText = `This app is using: Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), Electron (v${versions.electron()})`;
 information.style = "font-size: 12px; color: #fff; position: fixed; bottom: 0; right: 0; padding: 5px; background-color: rgba(0, 0, 0, 0.5);";
 
 // const startButton = document.getElementById("startButton");

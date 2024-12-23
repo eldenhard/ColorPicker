@@ -5,9 +5,9 @@ import { ref } from 'vue';
 import RGBAOutput from './RGBAOutput.vue';
 import ColorDisplay from './ColorDisplay.vue';
 import ColorWheel from './ColorWheel.vue';
-let RGBAColor = ref("")
+let RGBAColor = ref("rgba(255, 255, 255, 1)")
 
-const colorCurrentPixel = (val = "rgba(255, 255, 255, 1") => {
+const colorCurrentPixel = (val = "rgba(255, 255, 255, 1)") => {
   RGBAColor.value = val; // Устанавливаем значение цвета
 }
 </script>
