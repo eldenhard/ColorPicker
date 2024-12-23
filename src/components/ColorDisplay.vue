@@ -3,16 +3,17 @@
 <script setup lang="ts">
   import { ref, onMounted, onBeforeUnmount } from "vue";
 
-  const canvas = ref(null);
+  const canvas = ref<HTMLCanvasElement | null>(null);
   const mousePosition = ref({ x: 0, y: 0 });
 
   const ZOOM_REGION_SIZE = 50;
   const ZOOM_SCALE = ref(30);
 
-  let ctx : null | string = null;
-  let animationFrameId : null | string = null;
-  let intervalId : number | undefined;
-  const emit = defineEmits(['colorCurrentPixel'])
+  // const canvasRef = ref<HTMLCanvasElement | null>(null);
+  let ctx: CanvasRenderingContext2D | null = null;
+  let animationFrameId: number | null = null;
+  let intervalId: ReturnType<typeof setTimeout>
+  const emit = defineEmits(["colorCurrentPixel"]);
   // Функция для обновления координат мыши
   const updateMousePosition = async () => {
     try {
@@ -23,7 +24,8 @@
     }
   };
   // Функция рисования сетки
-  const drawGrid = (scaledWidth : number, scaledHeight: number) => {
+  const drawGrid = (scaledWidth: number, scaledHeight: number) => {
+    if (!ctx) return;
     const cellSize = ZOOM_SCALE.value / 2; // Размер одной ячейки в увеличении
     ctx.strokeStyle = "#999";
     ctx.lineWidth = 0.4;
@@ -73,7 +75,7 @@
           const scaledHeight = ZOOM_REGION_SIZE * ZOOM_SCALE.value;
 
           // Очищаем canvas
-          ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
+          ctx.clearRect(0, 0, canvas.value!.width, canvas.value!.height);
 
           // Рисуем увеличенную область
           ctx.drawImage(
@@ -109,22 +111,9 @@
   const stopCapture = () => {
     if (animationFrameId) cancelAnimationFrame(animationFrameId); // Останавливаем анимацию
   };
-  const stopCaptureOnRightClick = (event) => {
-    // Предотвращаем открытие контекстного меню
-    event.preventDefault();
 
-    // Останавливаем видео поток
-    stopCapture(); // Это функция, которую мы определяли ранее, она очищает поток и останавливает анимацию
-
-    // Также можем очистить canvas
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.value.width, canvas.value.height);
-    }
-
-    alert("Поток остановлен по правому клику");
-  };
-  const getPixelColor = (event) => {
-    const rect = canvas.value.getBoundingClientRect();
+  const getPixelColor = (event: MouseEvent) => {
+    const rect = canvas.value!.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
@@ -133,15 +122,18 @@
     const pixel = imageData.data;
 
     let color = `rgba(${pixel[0]}, ${pixel[1]}, ${pixel[2]}, ${pixel[3] / 255})`;
-    emit('colorCurrentPixel', color);
+    emit("colorCurrentPixel", color);
   };
   // Инициализация canvas и потока
   onMounted(() => {
-    ctx = canvas.value.getContext("2d");
+    if (canvas.value) {
+      ctx = canvas.value.getContext("2d");
+    }
     captureScreen();
     intervalId = setInterval(updateMousePosition, 1);
+    console.log("window", window);
     // Добавляем обработчик правого клика
-    window.electronAPI.onGlobalShortcut((message) => {
+    window.electronAPI.onGlobalShortcut(() => {
       stopCapture(); // Выводит сообщение в консоль Vue-приложения
     });
   });
@@ -149,10 +141,7 @@
   // Очистка ресурсов при размонтировании
   onBeforeUnmount(() => {
     stopCapture();
-    if (canvas.value) {
-      canvas.value.removeEventListener("contextmenu", stopCaptureOnRightClick);
-    }
-    clearInterval(intervalId);
+    if (intervalId !== null) clearInterval(intervalId);
   });
 </script>
 <template>

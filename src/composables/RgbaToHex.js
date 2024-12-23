@@ -41,6 +41,7 @@ export const rgbaToHex = (colorStr, forceRemoveAlpha = false) => {
           .map(number => number.toString(16)) // Converts numbers to hex
           .map(string => (string.length === 1 ? '0' + string : string)) // Adds 0 when length of one number is 1
           .join('')
+          .slice(0, 6)
       )
     }
   }
