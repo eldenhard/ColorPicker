@@ -6,7 +6,7 @@ import started from "electron-squirrel-startup";
 if (started) {
   app.quit();
 }
-let mainWindow
+let mainWindow;
 
 const createWindow = () => {
   // Create the browser window.
@@ -28,9 +28,9 @@ const createWindow = () => {
   } else {
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-  globalShortcut.register("Ctrl+W", () => {  
-    mainWindow.webContents.send('global-shortcut', 'Electron loves global shortcuts!');  
-  });  
+  globalShortcut.register("Ctrl+W", () => {
+    mainWindow.webContents.send("global-shortcut", "Electron loves global shortcuts!");
+  });
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
