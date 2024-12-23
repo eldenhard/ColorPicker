@@ -3,7 +3,6 @@
 <script setup>
   import { ref, watch } from "vue";
   import ColorPicker from "primevue/colorpicker";
-  import { rgbaToHex } from "../composables/RgbaToHex";
   import Toast from "../ui/Toast/Toast.vue";
 
   const color = ref("ff0000");
